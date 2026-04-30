@@ -4,6 +4,8 @@ import Registro from "./components/Registro";
 import Carpetas from "./components/Carpetas";
 import Archivos from "./components/Archivos";
 import Compartidos from "./components/Compartidos";
+import "./App.css";
+
 
 function App() {
   const [logueado, setLogueado] = useState(false);
@@ -29,6 +31,13 @@ function App() {
 
   const [archivoEditando, setArchivoEditando] = useState(null);
   const [nuevoNombreArchivo, setNuevoNombreArchivo] = useState("");
+
+  const [archivoAMover, setArchivoAMover] = useState(null);
+  const [carpetaDestinoId, setCarpetaDestinoId] = useState("");
+  const [nuevoNombrePerfil, setNuevoNombrePerfil] = useState("");
+
+  const [passwordActual, setPasswordActual] = useState("");
+  const [nuevaPassword, setNuevaPassword] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -475,14 +484,175 @@ function App() {
     }
   };
 
+  const moverArchivo = async () => {
+    const token = localStorage.getItem("token");
+
+    if (!archivoAMover) {
+      setMensaje("Selecciona un archivo para mover");
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:8080/archivos/${archivoAMover.id}/mover`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          carpetaId: carpetaDestinoId === "" ? null : Number(carpetaDestinoId)
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMensaje("Archivo movido correctamente");
+        setArchivoAMover(null);
+        setCarpetaDestinoId("");
+
+        if (carpetaSeleccionada) {
+          obtenerArchivosDeCarpeta(carpetaSeleccionada);
+        }
+
+        obtenerCarpetas(token);
+      } else if (response.status === 401) {
+        manejarSesionExpirada();
+      } else {
+        setMensaje(data.error || "Error al mover archivo");
+      }
+
+    } catch {
+      setMensaje("Error de conexión");
+    }
+  };
+
+  const actualizarPerfil = async () => {
+    const token = localStorage.getItem("token");
+
+    if (!nuevoNombrePerfil.trim()) {
+      setMensaje("El nombre no puede estar vacío");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:8080/usuarios/perfil", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          nombre: nuevoNombrePerfil
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        localStorage.setItem("usuarioNombre", data.nombre);
+        setUsuarioNombre(data.nombre);
+        setNuevoNombrePerfil("");
+        setMensaje("Perfil actualizado correctamente");
+      } else if (response.status === 401) {
+        manejarSesionExpirada();
+      } else {
+        setMensaje(data.error || data || "Error al actualizar perfil");
+      }
+
+    } catch {
+      setMensaje("Error de conexión");
+    }
+  };
+
+  const cambiarPassword = async () => {
+    const token = localStorage.getItem("token");
+
+    if (!passwordActual || !nuevaPassword) {
+      setMensaje("Completa ambos campos");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:8080/usuarios/password", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          passwordActual,
+          nuevaPassword
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMensaje("Contraseña actualizada correctamente");
+        setPasswordActual("");
+        setNuevaPassword("");
+      } else if (response.status === 401) {
+        manejarSesionExpirada();
+      } else {
+        setMensaje(data.error || "Error al cambiar contraseña");
+      }
+
+    } catch {
+      setMensaje("Error de conexión");
+    }
+  };
+
   return (
-    <div>
+    <div className="app-container">
       <h1>SafeMemories</h1>
 
       {logueado && (
-        <p>
-          Sesión iniciada como: <strong>{usuarioNombre}</strong> ({usuarioEmail})
-        </p>
+        <div>
+          <p>
+            Sesión iniciada como: <strong>{usuarioNombre}</strong> ({usuarioEmail})
+          </p>
+
+          <div>
+            <h3>Editar perfil</h3>
+
+            <input
+              type="text"
+              placeholder="Nuevo nombre"
+              value={nuevoNombrePerfil}
+              onChange={(e) => setNuevoNombrePerfil(e.target.value)}
+            />
+
+            <button onClick={actualizarPerfil}>
+              Actualizar nombre
+            </button>
+          </div>
+          <div>
+            <h3>Cambiar contraseña</h3>
+
+            <input
+              type="password"
+              placeholder="Contraseña actual"
+              value={passwordActual}
+              onChange={(e) => setPasswordActual(e.target.value)}
+            />
+
+            <br /><br />
+
+            <input
+              type="password"
+              placeholder="Nueva contraseña"
+              value={nuevaPassword}
+              onChange={(e) => setNuevaPassword(e.target.value)}
+            />
+
+            <br /><br />
+
+            <button onClick={cambiarPassword}>
+              Cambiar contraseña
+            </button>
+          </div>
+        </div>
       )}
 
       {mensaje && <p>{mensaje}</p>}
@@ -543,6 +713,12 @@ function App() {
             nuevoNombreArchivo={nuevoNombreArchivo}
             setNuevoNombreArchivo={setNuevoNombreArchivo}
             renombrarArchivo={renombrarArchivo}
+            carpetas={carpetas}
+            archivoAMover={archivoAMover}
+            setArchivoAMover={setArchivoAMover}
+            carpetaDestinoId={carpetaDestinoId}
+            setCarpetaDestinoId={setCarpetaDestinoId}
+            moverArchivo={moverArchivo}
           />
 
           <Compartidos

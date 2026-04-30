@@ -2,7 +2,7 @@
 //si no hay carpetas, muestra un mensaje que diga "No tienes carpetas"
 //y si hay carpetas, muestra una lista de carpetas con botones para ver los archivos de cada carpeta
 //y un botón para crear una carpeta 
-
+import { useState } from "react";
 function Carpetas({
     carpetas,
     nombreCarpeta,

@@ -19,7 +19,13 @@ function Archivos({
     setArchivoEditando,
     nuevoNombreArchivo,
     setNuevoNombreArchivo,
-    renombrarArchivo
+    renombrarArchivo,
+    carpetas,
+    archivoAMover,
+    setArchivoAMover,
+    carpetaDestinoId,
+    setCarpetaDestinoId,
+    moverArchivo
 }) {
     if (!carpetaSeleccionada) {
         return null;
@@ -52,6 +58,9 @@ function Archivos({
                             <button onClick={() => setArchivoACompartir(archivo)}>
                                 Compartir
                             </button>
+                            <button onClick={() => setArchivoAMover(archivo)}>
+                                Mover
+                            </button>
                             <button onClick={() => {
                                 setArchivoEditando(archivo.id);
                                 setNuevoNombreArchivo(archivo.nombreOriginal);
@@ -79,6 +88,35 @@ function Archivos({
                         </li>
                     ))}
                 </ul>
+
+            )}
+            {archivoAMover && (
+                <div>
+                    <h3>Mover archivo</h3>
+
+                    <p>Archivo: {archivoAMover.nombreOriginal}</p>
+
+                    <select
+                        value={carpetaDestinoId}
+                        onChange={(e) => setCarpetaDestinoId(e.target.value)}
+                    >
+                        <option value="">Sin carpeta</option>
+
+                        {carpetas.map((carpeta) => (
+                            <option key={carpeta.id} value={carpeta.id}>
+                                {carpeta.nombre}
+                            </option>
+                        ))}
+                    </select>
+
+                    <button onClick={moverArchivo}>
+                        Confirmar mover
+                    </button>
+
+                    <button onClick={() => setArchivoAMover(null)}>
+                        Cancelar
+                    </button>
+                </div>
             )}
 
             {/* SUBIR ARCHIVO */}
