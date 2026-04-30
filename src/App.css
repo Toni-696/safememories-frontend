@@ -1,18 +1,8 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: #f4f7fb;
+  background: #f3f6fb;
   color: #1f2937;
-}
-
-.app-container {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 30px;
-}
-
-h1 {
-  color: #2563eb;
 }
 
 button {
@@ -32,16 +22,69 @@ button:hover {
 input,
 select {
   padding: 8px;
-  margin: 5px;
+  margin: 5px 0;
   border: 1px solid #cbd5e1;
   border-radius: 8px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-section,
-.card {
+.auth-container {
+  max-width: 420px;
+  margin: 80px auto;
   background: white;
+  padding: 30px;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+.app-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr 280px;
+  gap: 20px;
+  min-height: 100vh;
   padding: 20px;
-  margin-top: 20px;
+  box-sizing: border-box;
+}
+
+.sidebar,
+.main-content,
+.profile-panel {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+
+.sidebar h1 {
+  color: #2563eb;
+  font-size: 32px;
+  margin-top: 0;
+}
+
+.main-content {
+  overflow-y: auto;
+}
+
+.profile-panel {
+  align-self: start;
+}
+
+.card {
+  background: #f9fafb;
+  padding: 15px;
+  margin-bottom: 15px;
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e7eb;
+}
+
+.profile-dropdown-static {
+  margin-top: 12px;
+}
+
+.mensaje {
+  background: #e0f2fe;
+  padding: 10px;
+  border-radius: 8px;
 }

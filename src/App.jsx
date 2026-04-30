@@ -39,6 +39,8 @@ function App() {
   const [passwordActual, setPasswordActual] = useState("");
   const [nuevaPassword, setNuevaPassword] = useState("");
 
+  const [mostrarMenuPerfil, setMostrarMenuPerfil] = useState(false);
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     const nombre = localStorage.getItem("usuarioNombre");
@@ -604,129 +606,143 @@ function App() {
   };
 
   return (
-    <div className="app-container">
-      <h1>SafeMemories</h1>
+    <div>
+      {!logueado && (
+        <div className="auth-container">
+          <h1>SafeMemories</h1>
 
-      {logueado && (
-        <div>
-          <p>
-            Sesión iniciada como: <strong>{usuarioNombre}</strong> ({usuarioEmail})
-          </p>
+          {mensaje && <p>{mensaje}</p>}
 
-          <div>
-            <h3>Editar perfil</h3>
-
-            <input
-              type="text"
-              placeholder="Nuevo nombre"
-              value={nuevoNombrePerfil}
-              onChange={(e) => setNuevoNombrePerfil(e.target.value)}
+          {!mostrarRegistro && (
+            <Login
+              onLogin={manejarLoginCorrecto}
+              setMensaje={setMensaje}
             />
+          )}
 
-            <button onClick={actualizarPerfil}>
-              Actualizar nombre
-            </button>
-          </div>
-          <div>
-            <h3>Cambiar contraseña</h3>
-
-            <input
-              type="password"
-              placeholder="Contraseña actual"
-              value={passwordActual}
-              onChange={(e) => setPasswordActual(e.target.value)}
+          {mostrarRegistro && (
+            <Registro
+              setMensaje={setMensaje}
+              onRegistroCorrecto={() => setMostrarRegistro(false)}
             />
+          )}
 
-            <br /><br />
-
-            <input
-              type="password"
-              placeholder="Nueva contraseña"
-              value={nuevaPassword}
-              onChange={(e) => setNuevaPassword(e.target.value)}
-            />
-
-            <br /><br />
-
-            <button onClick={cambiarPassword}>
-              Cambiar contraseña
-            </button>
-          </div>
+          <button onClick={() => setMostrarRegistro(!mostrarRegistro)}>
+            {mostrarRegistro ? "Volver al login" : "Crear cuenta"}
+          </button>
         </div>
       )}
 
-      {mensaje && <p>{mensaje}</p>}
-
-      {!logueado && !mostrarRegistro && (
-        <Login
-          onLogin={manejarLoginCorrecto}
-          setMensaje={setMensaje}
-        />
-      )}
-
-      {mostrarRegistro && !logueado && (
-        <Registro
-          setMensaje={setMensaje}
-          onRegistroCorrecto={() => setMostrarRegistro(false)}
-        />
-      )}
-
-      {!logueado && (
-        <button onClick={() => setMostrarRegistro(!mostrarRegistro)}>
-          {mostrarRegistro ? "Volver al login" : "Crear cuenta"}
-        </button>
-      )}
-
       {logueado && (
-        <button onClick={cerrarSesion}>
-          Cerrar sesión
-        </button>
-      )}
+        <div className="app-layout">
+          <aside className="sidebar">
+            <h1>SafeMemories</h1>
 
-      {logueado && (
-        <>
-          <Carpetas
-            carpetas={carpetas}
-            nombreCarpeta={nombreCarpeta}
-            setNombreCarpeta={setNombreCarpeta}
-            crearCarpeta={crearCarpeta}
-            obtenerArchivosDeCarpeta={obtenerArchivosDeCarpeta}
-            renombrarCarpeta={renombrarCarpeta}
-            borrarCarpeta={borrarCarpeta}
-          />
+            <Carpetas
+              carpetas={carpetas}
+              nombreCarpeta={nombreCarpeta}
+              setNombreCarpeta={setNombreCarpeta}
+              crearCarpeta={crearCarpeta}
+              obtenerArchivosDeCarpeta={obtenerArchivosDeCarpeta}
+              renombrarCarpeta={renombrarCarpeta}
+              borrarCarpeta={borrarCarpeta}
+            />
+          </aside>
 
-          <Archivos
-            carpetaSeleccionada={carpetaSeleccionada}
-            archivosCarpeta={archivosCarpeta}
-            setArchivoSeleccionado={setArchivoSeleccionado}
-            subirArchivo={subirArchivo}
-            verArchivo={verArchivo}
-            descargarArchivo={descargarArchivo}
-            borrarArchivo={borrarArchivo}
-            setArchivoACompartir={setArchivoACompartir}
-            archivoACompartir={archivoACompartir}
-            emailCompartir={emailCompartir}
-            setEmailCompartir={setEmailCompartir}
-            compartirArchivo={compartirArchivo}
-            archivoEditando={archivoEditando}
-            setArchivoEditando={setArchivoEditando}
-            nuevoNombreArchivo={nuevoNombreArchivo}
-            setNuevoNombreArchivo={setNuevoNombreArchivo}
-            renombrarArchivo={renombrarArchivo}
-            carpetas={carpetas}
-            archivoAMover={archivoAMover}
-            setArchivoAMover={setArchivoAMover}
-            carpetaDestinoId={carpetaDestinoId}
-            setCarpetaDestinoId={setCarpetaDestinoId}
-            moverArchivo={moverArchivo}
-          />
+          <main className="main-content">
+            {mensaje && <p className="mensaje">{mensaje}</p>}
 
-          <Compartidos
-            archivosCompartidos={archivosCompartidos}
-            verArchivo={verArchivo}
-            descargarArchivo={descargarArchivo}
-          />
-        </>
+            <Archivos
+              carpetaSeleccionada={carpetaSeleccionada}
+              archivosCarpeta={archivosCarpeta}
+              setArchivoSeleccionado={setArchivoSeleccionado}
+              subirArchivo={subirArchivo}
+              verArchivo={verArchivo}
+              descargarArchivo={descargarArchivo}
+              borrarArchivo={borrarArchivo}
+              setArchivoACompartir={setArchivoACompartir}
+              archivoACompartir={archivoACompartir}
+              emailCompartir={emailCompartir}
+              setEmailCompartir={setEmailCompartir}
+              compartirArchivo={compartirArchivo}
+              archivoEditando={archivoEditando}
+              setArchivoEditando={setArchivoEditando}
+              nuevoNombreArchivo={nuevoNombreArchivo}
+              setNuevoNombreArchivo={setNuevoNombreArchivo}
+              renombrarArchivo={renombrarArchivo}
+              carpetas={carpetas}
+              archivoAMover={archivoAMover}
+              setArchivoAMover={setArchivoAMover}
+              carpetaDestinoId={carpetaDestinoId}
+              setCarpetaDestinoId={setCarpetaDestinoId}
+              moverArchivo={moverArchivo}
+            />
+
+            <Compartidos
+              archivosCompartidos={archivosCompartidos}
+              verArchivo={verArchivo}
+              descargarArchivo={descargarArchivo}
+            />
+          </main>
+
+          <aside className="profile-panel">
+            <div className="card">
+              <strong>{usuarioNombre}</strong>
+              <p>{usuarioEmail}</p>
+            </div>
+
+            <div className="card">
+              <button onClick={() => setMostrarMenuPerfil(!mostrarMenuPerfil)}>
+                Perfil
+              </button>
+
+              {mostrarMenuPerfil && (
+                <div className="profile-dropdown-static">
+                  <h3>Editar perfil</h3>
+
+                  <input
+                    type="text"
+                    placeholder="Nuevo nombre"
+                    value={nuevoNombrePerfil}
+                    onChange={(e) => setNuevoNombrePerfil(e.target.value)}
+                  />
+
+                  <button onClick={actualizarPerfil}>
+                    Actualizar nombre
+                  </button>
+
+                  <hr />
+
+                  <h3>Cambiar contraseña</h3>
+
+                  <input
+                    type="password"
+                    placeholder="Contraseña actual"
+                    value={passwordActual}
+                    onChange={(e) => setPasswordActual(e.target.value)}
+                  />
+
+                  <input
+                    type="password"
+                    placeholder="Nueva contraseña"
+                    value={nuevaPassword}
+                    onChange={(e) => setNuevaPassword(e.target.value)}
+                  />
+
+                  <button onClick={cambiarPassword}>
+                    Cambiar contraseña
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <div className="card">
+              <button onClick={cerrarSesion}>
+                Cerrar sesión
+              </button>
+            </div>
+          </aside>
+        </div>
       )}
     </div>
   );
