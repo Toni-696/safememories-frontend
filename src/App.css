@@ -88,3 +88,75 @@ select {
   padding: 10px;
   border-radius: 8px;
 }
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* HEADER */
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  padding: 15px 25px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.app-header h1 {
+  margin: 0;
+  color: #2563eb;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+}
+
+/* CONTENIDO */
+.app-content {
+  display: flex;
+  flex: 1;
+  gap: 20px;
+  padding: 20px;
+}
+
+/* COLUMNAS */
+.sidebar {
+  width: 300px;
+  background: white;
+  border-radius: 12px;
+  padding: 15px;
+}
+
+.main-content {
+  flex: 1;
+  background: white;
+  border-radius: 12px;
+  padding: 15px;
+  overflow-y: auto;
+}
+
+/* DROPDOWN PERFIL */
+.profile-dropdown {
+  position: absolute;
+  right: 0;
+  top: 45px;
+  width: 300px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+/* MENSAJES */
+.mensaje {
+  background: #e0f2fe;
+  padding: 10px;
+  border-radius: 8px;
+}

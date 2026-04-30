@@ -634,70 +634,27 @@ function App() {
       )}
 
       {logueado && (
-        <div className="app-layout">
-          <aside className="sidebar">
+        <div className="app-container">
+
+          {/* HEADER */}
+          <header className="app-header">
             <h1>SafeMemories</h1>
 
-            <Carpetas
-              carpetas={carpetas}
-              nombreCarpeta={nombreCarpeta}
-              setNombreCarpeta={setNombreCarpeta}
-              crearCarpeta={crearCarpeta}
-              obtenerArchivosDeCarpeta={obtenerArchivosDeCarpeta}
-              renombrarCarpeta={renombrarCarpeta}
-              borrarCarpeta={borrarCarpeta}
-            />
-          </aside>
+            <div className="header-right">
+              <span>
+                <strong>{usuarioNombre}</strong> ({usuarioEmail})
+              </span>
 
-          <main className="main-content">
-            {mensaje && <p className="mensaje">{mensaje}</p>}
-
-            <Archivos
-              carpetaSeleccionada={carpetaSeleccionada}
-              archivosCarpeta={archivosCarpeta}
-              setArchivoSeleccionado={setArchivoSeleccionado}
-              subirArchivo={subirArchivo}
-              verArchivo={verArchivo}
-              descargarArchivo={descargarArchivo}
-              borrarArchivo={borrarArchivo}
-              setArchivoACompartir={setArchivoACompartir}
-              archivoACompartir={archivoACompartir}
-              emailCompartir={emailCompartir}
-              setEmailCompartir={setEmailCompartir}
-              compartirArchivo={compartirArchivo}
-              archivoEditando={archivoEditando}
-              setArchivoEditando={setArchivoEditando}
-              nuevoNombreArchivo={nuevoNombreArchivo}
-              setNuevoNombreArchivo={setNuevoNombreArchivo}
-              renombrarArchivo={renombrarArchivo}
-              carpetas={carpetas}
-              archivoAMover={archivoAMover}
-              setArchivoAMover={setArchivoAMover}
-              carpetaDestinoId={carpetaDestinoId}
-              setCarpetaDestinoId={setCarpetaDestinoId}
-              moverArchivo={moverArchivo}
-            />
-
-            <Compartidos
-              archivosCompartidos={archivosCompartidos}
-              verArchivo={verArchivo}
-              descargarArchivo={descargarArchivo}
-            />
-          </main>
-
-          <aside className="profile-panel">
-            <div className="card">
-              <strong>{usuarioNombre}</strong>
-              <p>{usuarioEmail}</p>
-            </div>
-
-            <div className="card">
               <button onClick={() => setMostrarMenuPerfil(!mostrarMenuPerfil)}>
                 Perfil
               </button>
 
+              <button onClick={cerrarSesion}>
+                Cerrar sesión
+              </button>
+
               {mostrarMenuPerfil && (
-                <div className="profile-dropdown-static">
+                <div className="profile-dropdown">
                   <h3>Editar perfil</h3>
 
                   <input
@@ -735,13 +692,60 @@ function App() {
                 </div>
               )}
             </div>
+          </header>
 
-            <div className="card">
-              <button onClick={cerrarSesion}>
-                Cerrar sesión
-              </button>
+          {/* CONTENIDO */}
+          <div className="app-content">
+
+            <div className="sidebar">
+              <Carpetas
+                carpetas={carpetas}
+                nombreCarpeta={nombreCarpeta}
+                setNombreCarpeta={setNombreCarpeta}
+                crearCarpeta={crearCarpeta}
+                obtenerArchivosDeCarpeta={obtenerArchivosDeCarpeta}
+                renombrarCarpeta={renombrarCarpeta}
+                borrarCarpeta={borrarCarpeta}
+              />
             </div>
-          </aside>
+
+            <div className="main-content">
+              {mensaje && <p className="mensaje">{mensaje}</p>}
+
+              <Archivos
+                carpetaSeleccionada={carpetaSeleccionada}
+                archivosCarpeta={archivosCarpeta}
+                setArchivoSeleccionado={setArchivoSeleccionado}
+                subirArchivo={subirArchivo}
+                verArchivo={verArchivo}
+                descargarArchivo={descargarArchivo}
+                borrarArchivo={borrarArchivo}
+                setArchivoACompartir={setArchivoACompartir}
+                archivoACompartir={archivoACompartir}
+                emailCompartir={emailCompartir}
+                setEmailCompartir={setEmailCompartir}
+                compartirArchivo={compartirArchivo}
+                archivoEditando={archivoEditando}
+                setArchivoEditando={setArchivoEditando}
+                nuevoNombreArchivo={nuevoNombreArchivo}
+                setNuevoNombreArchivo={setNuevoNombreArchivo}
+                renombrarArchivo={renombrarArchivo}
+                carpetas={carpetas}
+                archivoAMover={archivoAMover}
+                setArchivoAMover={setArchivoAMover}
+                carpetaDestinoId={carpetaDestinoId}
+                setCarpetaDestinoId={setCarpetaDestinoId}
+                moverArchivo={moverArchivo}
+              />
+
+              <Compartidos
+                archivosCompartidos={archivosCompartidos}
+                verArchivo={verArchivo}
+                descargarArchivo={descargarArchivo}
+              />
+            </div>
+
+          </div>
         </div>
       )}
     </div>
