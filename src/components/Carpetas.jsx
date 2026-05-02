@@ -24,34 +24,60 @@ function Carpetas({
             ) : (
                 <ul>
                     {carpetas.map((carpeta) => (
-                        <li key={carpeta.id}>
-                            <button onClick={() => obtenerArchivosDeCarpeta(carpeta)}>
-                                {carpeta.nombre}
-                            </button>
+                        <li key={carpeta.id} className="folder-item">
+                            <div className="folder-header">
 
-                            <button onClick={() => {
-                                setCarpetaEditando(carpeta.id);
-                                setNuevoNombre(carpeta.nombre);
-                            }}>
-                                Renombrar
-                            </button>
+                                <button
+                                    className="folder-name-button"
+                                    onClick={() => obtenerArchivosDeCarpeta(carpeta)}
+                                    title="Mostrar archivos"
+                                >
+                                    <span className="folder-icon">📁</span>
+                                    {carpeta.nombre}
+                                </button>
 
-                            <button onClick={() => borrarCarpeta(carpeta.id)}>
-                                Borrar
-                            </button>
+                                <div className="folder-actions">
+                                    <button
+                                        onClick={() => obtenerArchivosDeCarpeta(carpeta)}
+                                        title="Mostrar archivos"
+                                    >
+                                        👁
+                                    </button>
+
+                                    <button
+                                        onClick={() => {
+                                            setCarpetaEditando(carpeta.id);
+                                            setNuevoNombre(carpeta.nombre);
+                                        }}
+                                        title="Renombrar"
+                                    >
+                                        ✏
+                                    </button>
+
+                                    <button
+                                        onClick={() => borrarCarpeta(carpeta.id)}
+                                        title="Borrar"
+                                    >
+                                        🗑
+                                    </button>
+                                </div>
+
+                            </div>
 
                             {carpetaEditando === carpeta.id && (
-                                <div>
+                                <div className="folder-edit">
                                     <input
                                         type="text"
                                         value={nuevoNombre}
                                         onChange={(e) => setNuevoNombre(e.target.value)}
                                     />
 
-                                    <button onClick={() => {
-                                        renombrarCarpeta(carpeta.id, nuevoNombre);
-                                        setCarpetaEditando(null);
-                                    }}>
+                                    <button
+                                        onClick={() => {
+                                            renombrarCarpeta(carpeta.id, nuevoNombre);
+                                            setCarpetaEditando(null);
+                                        }}
+                                    >
                                         Guardar
                                     </button>
 

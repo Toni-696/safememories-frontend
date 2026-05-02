@@ -82,7 +82,7 @@ function App() {
     setArchivosCompartidos([]);
     setCarpetaSeleccionada(null);
     setArchivosCarpeta([]);
-    setMensaje("Sesión cerrada");
+    setMensaje("");
   };
 
   const obtenerCarpetas = async (tokenRecibido = null) => {
@@ -608,10 +608,8 @@ function App() {
   return (
     <div>
       {!logueado && (
-        <div className="auth-container">
-          <h1>SafeMemories</h1>
+        <div className="auth-page">
 
-          {mensaje && <p>{mensaje}</p>}
 
           {!mostrarRegistro && (
             <Login

@@ -32,30 +32,42 @@ function Login({ onLogin, setMensaje }) {
     };
 
     return (
-        <div>
-            <h2>Login</h2>
+        <div className="login-container">
 
-            <input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-            />
+            {/* LADO IZQUIERDO */}
+            <div className="login-image">
+                <div className="overlay">
+                    <h1>SafeMemories</h1>
+                    <p>Guarda, organiza y comparte tus recuerdos de forma segura</p>
+                </div>
+            </div>
 
-            <br /><br />
+            {/* LADO DERECHO */}
+            <div className="login-form">
 
-            <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-            />
+                <h2>Iniciar sesión</h2>
 
-            <br /><br />
+                <input
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                />
 
-            <button onClick={login}>Entrar</button>
+                <input
+                    type="password"
+                    placeholder="Contraseña"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                />
+
+                <button onClick={login}>
+                    Entrar
+                </button>
+
+            </div>
+
         </div>
     );
 }
-
 export default Login;
