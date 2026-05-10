@@ -5,7 +5,9 @@ import Carpetas from "./components/Carpetas";
 import Archivos from "./components/Archivos";
 import Compartidos from "./components/Compartidos";
 import "./App.css";
-
+import CarpetasCompartidas from "./components/CarpetasCompartidas";
+import ArchivosCarpetaCompartida from "./components/ArchivosCarpetaCompartida";
+import SolicitudesRecibidas from "./components/SolicitudesRecibidas";
 
 function App() {
   const [logueado, setLogueado] = useState(false);
@@ -40,6 +42,12 @@ function App() {
   const [nuevaPassword, setNuevaPassword] = useState("");
 
   const [mostrarMenuPerfil, setMostrarMenuPerfil] = useState(false);
+  const [carpetasCompartidas, setCarpetasCompartidas] = useState([]);
+  const [carpetaCompartidaSeleccionada, setCarpetaCompartidaSeleccionada] = useState(null);
+  const [archivosCarpetaCompartida, setArchivosCarpetaCompartida] = useState([]);
+  const [archivosSeleccionadosDescarga, setArchivosSeleccionadosDescarga] = useState([]);
+
+  const [solicitudesRecibidas, setSolicitudesRecibidas] = useState([]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -52,6 +60,8 @@ function App() {
       setLogueado(true);
       obtenerCarpetas(token);
       obtenerArchivosCompartidos(token);
+      obtenerCarpetasCompartidas(token);
+      obtenerSolicitudesRecibidas(token);
     }
   }, []);
 
@@ -83,6 +93,10 @@ function App() {
     setCarpetaSeleccionada(null);
     setArchivosCarpeta([]);
     setMensaje("");
+    setCarpetasCompartidas([]);
+    setCarpetaCompartidaSeleccionada(null);
+    setArchivosCarpetaCompartida([]);
+    setSolicitudesRecibidas([]);
   };
 
   const obtenerCarpetas = async (tokenRecibido = null) => {
@@ -380,6 +394,8 @@ function App() {
 
     obtenerCarpetas(data.token);
     obtenerArchivosCompartidos(data.token);
+    obtenerCarpetasCompartidas(data.token);
+    obtenerSolicitudesRecibidas(data.token);
   };
 
   const renombrarCarpeta = async (id, nuevoNombre) => {
@@ -604,6 +620,150 @@ function App() {
       setMensaje("Error de conexión");
     }
   };
+  const obtenerCarpetasCompartidas = async (tokenRecibido = null) => {
+    const token = tokenRecibido || localStorage.getItem("token");
+
+    try {
+      const response = await fetch("http://localhost:8080/carpetas/compartidas", {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setCarpetasCompartidas(data);
+      } else if (response.status === 401) {
+        manejarSesionExpirada();
+      } else {
+        setMensaje(data.error || "Error al cargar carpetas compartidas");
+      }
+
+    } catch {
+      setMensaje("Error de conexión");
+    }
+  };
+  const obtenerArchivosDeCarpetaCompartida = async (carpeta) => {
+    const token = localStorage.getItem("token");
+
+    try {
+      const response = await fetch(
+        `http://localhost:8080/carpetas/compartidas/${carpeta.id}/archivos`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setCarpetaCompartidaSeleccionada(carpeta);
+        setArchivosCarpetaCompartida(data);
+        setMensaje("");
+      } else if (response.status === 401) {
+        manejarSesionExpirada();
+      } else {
+        setMensaje(data.error || "Error al cargar archivos de carpeta compartida");
+      }
+
+    } catch {
+      setMensaje("Error de conexión");
+    }
+  };
+
+  const solicitarDescarga = async () => {
+    const token = localStorage.getItem("token");
+
+    if (archivosSeleccionadosDescarga.length === 0) {
+      setMensaje("Selecciona al menos un archivo");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:8080/solicitudes-descarga", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          archivosIds: archivosSeleccionadosDescarga
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMensaje(data.mensaje || "Solicitud enviada correctamente");
+        setArchivosSeleccionadosDescarga([]);
+      } else if (response.status === 401) {
+        manejarSesionExpirada();
+      } else {
+        setMensaje(data.error || "Error al solicitar descarga");
+      }
+
+    } catch {
+      setMensaje("Error de conexión");
+    }
+  };
+
+  const obtenerSolicitudesRecibidas = async (tokenRecibido = null) => {
+    const token = tokenRecibido || localStorage.getItem("token");
+
+    try {
+      const response = await fetch("http://localhost:8080/solicitudes-descarga/recibidas", {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSolicitudesRecibidas(data);
+      } else if (response.status === 401) {
+        manejarSesionExpirada();
+      } else {
+        setMensaje(data.error || "Error al cargar solicitudes");
+      }
+
+    } catch {
+      setMensaje("Error de conexión");
+    }
+  };
+
+  const responderSolicitud = async (idSolicitud, accion) => {
+    const token = localStorage.getItem("token");
+
+    try {
+      const response = await fetch(
+        `http://localhost:8080/solicitudes-descarga/${idSolicitud}/${accion}`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMensaje(data.mensaje || "Solicitud actualizada");
+        obtenerSolicitudesRecibidas(token);
+      } else if (response.status === 401) {
+        manejarSesionExpirada();
+      } else {
+        setMensaje(data.error || "Error al responder solicitud");
+      }
+
+    } catch {
+      setMensaje("Error de conexión");
+    }
+  };
 
   return (
     <div>
@@ -705,6 +865,10 @@ function App() {
                 renombrarCarpeta={renombrarCarpeta}
                 borrarCarpeta={borrarCarpeta}
               />
+              <CarpetasCompartidas
+                carpetasCompartidas={carpetasCompartidas}
+                obtenerArchivosDeCarpetaCompartida={obtenerArchivosDeCarpetaCompartida}
+              />
             </div>
 
             <div className="main-content">
@@ -735,11 +899,22 @@ function App() {
                 setCarpetaDestinoId={setCarpetaDestinoId}
                 moverArchivo={moverArchivo}
               />
+              <ArchivosCarpetaCompartida
+                carpetaCompartidaSeleccionada={carpetaCompartidaSeleccionada}
+                archivosCarpetaCompartida={archivosCarpetaCompartida}
+                archivosSeleccionadosDescarga={archivosSeleccionadosDescarga}
+                setArchivosSeleccionadosDescarga={setArchivosSeleccionadosDescarga}
+                solicitarDescarga={solicitarDescarga}
+              />
 
               <Compartidos
                 archivosCompartidos={archivosCompartidos}
                 verArchivo={verArchivo}
                 descargarArchivo={descargarArchivo}
+              />
+              <SolicitudesRecibidas
+                solicitudesRecibidas={solicitudesRecibidas}
+                responderSolicitud={responderSolicitud}
               />
             </div>
 
