@@ -10,7 +10,14 @@ function Carpetas({
     crearCarpeta,
     obtenerArchivosDeCarpeta,
     renombrarCarpeta,
-    borrarCarpeta
+    borrarCarpeta,
+    carpetaACompartir,
+    setCarpetaACompartir,
+    emailCompartirCarpeta,
+    setEmailCompartirCarpeta,
+    compartirCarpeta,
+    mostrarCrearCarpeta,
+    setMostrarCrearCarpeta
 }) {
     const [carpetaEditando, setCarpetaEditando] = useState(null);
     const [nuevoNombre, setNuevoNombre] = useState("");
@@ -53,6 +60,12 @@ function Carpetas({
                                     >
                                         ✏
                                     </button>
+                                    <button
+                                        onClick={() => setCarpetaACompartir(carpeta)}
+                                        title="Compartir carpeta"
+                                    >
+                                        🔗
+                                    </button>
 
                                     <button
                                         onClick={() => borrarCarpeta(carpeta.id)}
@@ -91,18 +104,56 @@ function Carpetas({
                 </ul>
             )}
 
-            <h3>Crear carpeta</h3>
+            {carpetaACompartir && (
+                <div className="folder-edit">
+                    <h3>Compartir carpeta</h3>
 
-            <input
-                type="text"
-                placeholder="Nombre de carpeta"
-                value={nombreCarpeta}
-                onChange={(e) => setNombreCarpeta(e.target.value)}
-            />
+                    <p>Carpeta: {carpetaACompartir.nombre}</p>
 
-            <button onClick={crearCarpeta}>
-                Crear
-            </button>
+                    <input
+                        type="email"
+                        placeholder="Email del usuario"
+                        value={emailCompartirCarpeta}
+                        onChange={(e) => setEmailCompartirCarpeta(e.target.value)}
+                    />
+
+                    <button onClick={compartirCarpeta}>
+                        Confirmar compartir
+                    </button>
+
+                    <button onClick={() => setCarpetaACompartir(null)}>
+                        Cancelar
+                    </button>
+                </div>
+            )}
+
+            <div className="crear-carpeta-container">
+
+                <button
+                    className="toggle-crear-carpeta"
+                    onClick={() => setMostrarCrearCarpeta(!mostrarCrearCarpeta)}
+                >
+                    + Crear carpeta
+                </button>
+
+                {mostrarCrearCarpeta && (
+                    <div className="crear-carpeta-form">
+                        <input
+                            type="text"
+                            placeholder="Nombre de la carpeta"
+                            value={nombreCarpeta}
+                            onChange={(e) => setNombreCarpeta(e.target.value)}
+                        />
+
+                        <button onClick={crearCarpeta}>
+                            Crear
+                        </button>
+                    </div>
+                )}
+
+            </div>
+
+            <br></br><br></br><br></br>
         </div>
     );
 }

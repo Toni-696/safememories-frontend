@@ -143,6 +143,7 @@ select {
   border-radius: 12px;
   padding: 15px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  z-index: 9999;
 }
 
 /* MENSAJES */
@@ -256,14 +257,16 @@ select {
 .folder-header {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 4px;
 }
 
 .folder-name-button {
   display: flex;
   align-items: left;
-  gap: 6px;
-  flex: 1;
+  gap: 4px;
+
+  padding-left: 0;
+  margin-left: 4px;
 
   background: transparent;
   color: #1e3a8a;
@@ -272,9 +275,6 @@ select {
   border: none;
   cursor: pointer;
   text-align: left;
-
-  padding-left: 0;
-  margin-left: 0;
 }
 
 .folder-name-button:hover {
@@ -422,4 +422,105 @@ select {
   border-radius: 12px;
   padding: 15px;
   margin-bottom: 15px;
+}
+
+.crear-carpeta-container {
+  margin-top: 20px;
+}
+
+.toggle-crear-carpeta {
+  background: transparent;
+  color: #1e3a8a;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 0;
+}
+
+.toggle-crear-carpeta:hover {
+  background: transparent;
+  text-decoration: underline;
+}
+
+.crear-carpeta-form {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  align-items: left;
+}
+
+.crear-carpeta-form input {
+  margin: 0;
+}
+
+/* LAYOUT PRINCIPAL */
+.app-content {
+  display: grid;
+  grid-template-columns: 280px 1fr 320px;
+  gap: 20px;
+  padding: 20px;
+  flex: 1;
+}
+
+/* PANEL DERECHO */
+.requests-panel {
+  background: white;
+  border-radius: 12px;
+  padding: 15px;
+  height: fit-content;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+  overflow-y: auto;
+  max-height: calc(100vh - 120px);
+}
+
+/* BOTÓN SOLICITUDES */
+.toggle-requests {
+  width: 100%;
+  margin-bottom: 15px;
+  background: #2563eb;
+}
+
+.toggle-requests:hover {
+  background: #1d4ed8;
+}
+
+/* Aprovechar todo el ancho de la pantalla */
+.app-container {
+  width: 100%;
+  max-width: none;
+}
+
+.app-content {
+  width: 100%;
+  max-width: none;
+  box-sizing: border-box;
+
+  display: grid;
+
+  /* laterales más estrechos y centro más amplio */
+  grid-template-columns: 340px minmax(0, 1fr) 260px;
+
+  /* menos separación */
+  gap: 12px;
+
+  /* menos margen lateral */
+  padding: 12px;
+}
+
+/* Que el centro pueda expandirse bien */
+.main-content {
+  min-width: 0;
+}
+
+/* Columnas más cómodas */
+.sidebar {
+  width: auto;
+}
+
+.requests-panel {
+  width: auto;
+}
+
+/* Más espacio para las fotos */
+.file-grid {
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
 }

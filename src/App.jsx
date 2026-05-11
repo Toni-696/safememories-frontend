@@ -8,6 +8,7 @@ import "./App.css";
 import CarpetasCompartidas from "./components/CarpetasCompartidas";
 import ArchivosCarpetaCompartida from "./components/ArchivosCarpetaCompartida";
 import SolicitudesRecibidas from "./components/SolicitudesRecibidas";
+import SolicitudesEnviadas from "./components/SolicitudesEnviadas";
 
 function App() {
   const [logueado, setLogueado] = useState(false);
@@ -49,6 +50,12 @@ function App() {
 
   const [solicitudesRecibidas, setSolicitudesRecibidas] = useState([]);
 
+  const [solicitudesEnviadas, setSolicitudesEnviadas] = useState([]);
+  const [carpetaACompartir, setCarpetaACompartir] = useState(null);
+  const [emailCompartirCarpeta, setEmailCompartirCarpeta] = useState("");
+  const [mostrarCrearCarpeta, setMostrarCrearCarpeta] = useState(false);
+  const [mostrarSolicitudes, setMostrarSolicitudes] = useState(true);
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     const nombre = localStorage.getItem("usuarioNombre");
@@ -62,6 +69,7 @@ function App() {
       obtenerArchivosCompartidos(token);
       obtenerCarpetasCompartidas(token);
       obtenerSolicitudesRecibidas(token);
+      obtenerSolicitudesEnviadas(data.token);
     }
   }, []);
 
@@ -97,6 +105,7 @@ function App() {
     setCarpetaCompartidaSeleccionada(null);
     setArchivosCarpetaCompartida([]);
     setSolicitudesRecibidas([]);
+    setSolicitudesEnviadas([]);
   };
 
   const obtenerCarpetas = async (tokenRecibido = null) => {
@@ -396,6 +405,7 @@ function App() {
     obtenerArchivosCompartidos(data.token);
     obtenerCarpetasCompartidas(data.token);
     obtenerSolicitudesRecibidas(data.token);
+    obtenerSolicitudesEnviadas(data.token);
   };
 
   const renombrarCarpeta = async (id, nuevoNombre) => {
@@ -765,6 +775,74 @@ function App() {
     }
   };
 
+  const obtenerSolicitudesEnviadas = async (tokenRecibido = null) => {
+    const token = tokenRecibido || localStorage.getItem("token");
+
+    try {
+      const response = await fetch("http://localhost:8080/solicitudes-descarga/enviadas", {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSolicitudesEnviadas(data);
+      } else if (response.status === 401) {
+        manejarSesionExpirada();
+      } else {
+        setMensaje(data.error || "Error al cargar solicitudes enviadas");
+      }
+    } catch {
+      setMensaje("Error de conexión");
+    }
+  };
+  const compartirCarpeta = async () => {
+    const token = localStorage.getItem("token");
+
+    if (!carpetaACompartir) {
+      setMensaje("Selecciona una carpeta para compartir");
+      return;
+    }
+
+    if (!emailCompartirCarpeta) {
+      setMensaje("Introduce el email del usuario");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `http://localhost:8080/carpetas/${carpetaACompartir.id}/compartir`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            email: emailCompartirCarpeta
+          })
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMensaje(data.mensaje || "Carpeta compartida correctamente");
+        setCarpetaACompartir(null);
+        setEmailCompartirCarpeta("");
+      } else if (response.status === 401) {
+        manejarSesionExpirada();
+      } else {
+        setMensaje(data.error || "Error al compartir carpeta");
+      }
+
+    } catch {
+      setMensaje("Error de conexión");
+    }
+  };
+
   return (
     <div>
       {!logueado && (
@@ -855,7 +933,9 @@ function App() {
           {/* CONTENIDO */}
           <div className="app-content">
 
+            {/* IZQUIERDA */}
             <div className="sidebar">
+
               <Carpetas
                 carpetas={carpetas}
                 nombreCarpeta={nombreCarpeta}
@@ -864,14 +944,25 @@ function App() {
                 obtenerArchivosDeCarpeta={obtenerArchivosDeCarpeta}
                 renombrarCarpeta={renombrarCarpeta}
                 borrarCarpeta={borrarCarpeta}
+                carpetaACompartir={carpetaACompartir}
+                setCarpetaACompartir={setCarpetaACompartir}
+                emailCompartirCarpeta={emailCompartirCarpeta}
+                setEmailCompartirCarpeta={setEmailCompartirCarpeta}
+                compartirCarpeta={compartirCarpeta}
+                mostrarCrearCarpeta={mostrarCrearCarpeta}
+                setMostrarCrearCarpeta={setMostrarCrearCarpeta}
               />
+
               <CarpetasCompartidas
                 carpetasCompartidas={carpetasCompartidas}
                 obtenerArchivosDeCarpetaCompartida={obtenerArchivosDeCarpetaCompartida}
               />
+
             </div>
 
+            {/* CENTRO */}
             <div className="main-content">
+
               {mensaje && <p className="mensaje">{mensaje}</p>}
 
               <Archivos
@@ -899,6 +990,7 @@ function App() {
                 setCarpetaDestinoId={setCarpetaDestinoId}
                 moverArchivo={moverArchivo}
               />
+
               <ArchivosCarpetaCompartida
                 carpetaCompartidaSeleccionada={carpetaCompartidaSeleccionada}
                 archivosCarpetaCompartida={archivosCarpetaCompartida}
@@ -907,16 +999,35 @@ function App() {
                 solicitarDescarga={solicitarDescarga}
               />
 
-              <Compartidos
-                archivosCompartidos={archivosCompartidos}
-                verArchivo={verArchivo}
-                descargarArchivo={descargarArchivo}
-              />
-              <SolicitudesRecibidas
-                solicitudesRecibidas={solicitudesRecibidas}
-                responderSolicitud={responderSolicitud}
-              />
             </div>
+
+            {/* DERECHA */}
+            <aside className="requests-panel">
+
+              <button
+                className="toggle-requests"
+                onClick={() => setMostrarSolicitudes(!mostrarSolicitudes)}
+              >
+                {mostrarSolicitudes
+                  ? "Ocultar solicitudes"
+                  : "Solicitudes"}
+              </button>
+
+              {mostrarSolicitudes && (
+                <>
+                  <SolicitudesRecibidas
+                    solicitudesRecibidas={solicitudesRecibidas}
+                    responderSolicitud={responderSolicitud}
+                  />
+
+                  <SolicitudesEnviadas
+                    solicitudesEnviadas={solicitudesEnviadas}
+                    descargarArchivo={descargarArchivo}
+                  />
+                </>
+              )}
+
+            </aside>
 
           </div>
         </div>
