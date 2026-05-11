@@ -1,11 +1,8 @@
-//Muestra los archivos de la carpeta seleccionada
-//si no hay archivos, muestra un mensaje que diga "Esta carpeta está vacía"
-//y si hay archivos, muestra una lista de archivos con botones para ver, descargar, borrar y compartir  
-
 import ImagenProtegida from "./ImagenProtegida";
 
 function Archivos({
     carpetaSeleccionada,
+    mostrandoTodasLasImagenes,
     archivosCarpeta,
     setArchivoSeleccionado,
     subirArchivo,
@@ -29,16 +26,28 @@ function Archivos({
     setCarpetaDestinoId,
     moverArchivo
 }) {
-    if (!carpetaSeleccionada) {
+    if (
+        !mostrandoTodasLasImagenes &&
+        !carpetaSeleccionada
+    ) {
         return null;
     }
-
     return (
         <div>
-            <h2>Archivos de {carpetaSeleccionada.nombre}</h2>
+            <h2>
+                {mostrandoTodasLasImagenes
+                    ? "Todas mis imágenes"
+                    : carpetaSeleccionada
+                        ? `Archivos de ${carpetaSeleccionada.nombre}`
+                        : "Selecciona una carpeta"}
+            </h2>
 
             {archivosCarpeta.length === 0 ? (
-                <p>Esta carpeta está vacía</p>
+                <p>
+                    {mostrandoTodasLasImagenes
+                        ? "No tienes imágenes subidas"
+                        : "Esta carpeta está vacía"}
+                </p>
             ) : (
                 <div className="file-grid">
                     {archivosCarpeta.map((archivo) => {
@@ -46,77 +55,76 @@ function Archivos({
 
                         return (
                             <div key={archivo.id} className="file-card">
-                                <div key={archivo.id} className="file-card">
-                                    {esImagen ? (
-                                        <ImagenProtegida
-                                            archivoId={archivo.id}
-                                            alt={archivo.nombreOriginal}
-                                        />
-                                    ) : (
-                                        <div className="file-placeholder">
-                                            📄
-                                        </div>
-                                    )}
-
-                                    <p className="file-name">{archivo.nombreOriginal}</p>
-
-                                    <div className="file-extra-actions">
-                                        <button onClick={() => verArchivo(archivo.id)} title="Ver">
-                                            👁
-                                        </button>
-
-                                        <button onClick={() => descargarArchivo(archivo.id, archivo.nombreOriginal)} title="Descargar">
-                                            ⬇
-                                        </button>
-
-                                        <button onClick={() => borrarArchivo(archivo.id)} title="Borrar">
-                                            🗑
-                                        </button>
-
-                                        <button
-                                            onClick={() => {
-                                                setArchivoEditando(archivo.id);
-                                                setNuevoNombreArchivo(archivo.nombreOriginal);
-                                            }}
-                                            title="Renombrar"
-                                        >
-                                            ✏
-                                        </button>
-
-                                        <button onClick={() => setArchivoACompartir(archivo)} title="Compartir">
-                                            🔗
-                                        </button>
-
-                                        <button onClick={() => setArchivoAMover(archivo)} title="Mover">
-                                            📁
-                                        </button>
+                                {esImagen ? (
+                                    <ImagenProtegida
+                                        archivoId={archivo.id}
+                                        alt={archivo.nombreOriginal}
+                                    />
+                                ) : (
+                                    <div className="file-placeholder">
+                                        📄
                                     </div>
+                                )}
 
-                                    {archivoEditando === archivo.id && (
-                                        <div>
-                                            <input
-                                                type="text"
-                                                value={nuevoNombreArchivo}
-                                                onChange={(e) => setNuevoNombreArchivo(e.target.value)}
-                                            />
+                                <p className="file-name">
+                                    {archivo.nombreOriginal.replace(/\.[^/.]+$/, "")}
+                                </p>
 
-                                            <button onClick={() => renombrarArchivo(archivo.id)}>
-                                                Guardar
-                                            </button>
+                                <div className="file-extra-actions">
+                                    <button onClick={() => verArchivo(archivo.id)} title="Ver">
+                                        👁
+                                    </button>
 
-                                            <button onClick={() => setArchivoEditando(null)}>
-                                                Cancelar
-                                            </button>
-                                        </div>
-                                    )}
+                                    <button onClick={() => descargarArchivo(archivo.id, archivo.nombreOriginal)} title="Descargar">
+                                        ⬇
+                                    </button>
+
+                                    <button onClick={() => borrarArchivo(archivo.id)} title="Borrar">
+                                        🗑
+                                    </button>
+
+                                    <button
+                                        onClick={() => {
+                                            setArchivoEditando(archivo.id);
+                                            setNuevoNombreArchivo(archivo.nombreOriginal);
+                                        }}
+                                        title="Renombrar"
+                                    >
+                                        ✏
+                                    </button>
+
+                                    <button onClick={() => setArchivoACompartir(archivo)} title="Compartir">
+                                        🔗
+                                    </button>
+
+                                    <button onClick={() => setArchivoAMover(archivo)} title="Mover">
+                                        📁
+                                    </button>
                                 </div>
 
+                                {archivoEditando === archivo.id && (
+                                    <div>
+                                        <input
+                                            type="text"
+                                            value={nuevoNombreArchivo}
+                                            onChange={(e) => setNuevoNombreArchivo(e.target.value)}
+                                        />
+
+                                        <button onClick={() => renombrarArchivo(archivo.id)}>
+                                            Guardar
+                                        </button>
+
+                                        <button onClick={() => setArchivoEditando(null)}>
+                                            Cancelar
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         );
                     })}
                 </div>
-
             )}
+
             {archivoAMover && (
                 <div>
                     <h3>Mover archivo</h3>
@@ -146,19 +154,21 @@ function Archivos({
                 </div>
             )}
 
-            {/* SUBIR ARCHIVO */}
-            <h3>Subir archivo</h3>
+            {!mostrandoTodasLasImagenes && carpetaSeleccionada && (
+                <>
+                    <h3>Subir archivo</h3>
 
-            <input
-                type="file"
-                onChange={(e) => setArchivoSeleccionado(e.target.files[0])}
-            />
+                    <input
+                        type="file"
+                        onChange={(e) => setArchivoSeleccionado(e.target.files[0])}
+                    />
 
-            <button onClick={subirArchivo}>
-                Subir
-            </button>
+                    <button onClick={subirArchivo}>
+                        Subir
+                    </button>
+                </>
+            )}
 
-            {/* COMPARTIR */}
             {archivoACompartir && (
                 <div>
                     <h3>Compartir archivo</h3>

@@ -55,6 +55,7 @@ function App() {
   const [emailCompartirCarpeta, setEmailCompartirCarpeta] = useState("");
   const [mostrarCrearCarpeta, setMostrarCrearCarpeta] = useState(false);
   const [mostrarSolicitudes, setMostrarSolicitudes] = useState(true);
+  const [mostrandoTodasLasImagenes, setMostrandoTodasLasImagenes] = useState(true);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -66,10 +67,11 @@ function App() {
       setUsuarioEmail(email || "");
       setLogueado(true);
       obtenerCarpetas(token);
+      obtenerTodosLosArchivos(token);
       obtenerArchivosCompartidos(token);
       obtenerCarpetasCompartidas(token);
       obtenerSolicitudesRecibidas(token);
-      obtenerSolicitudesEnviadas(data.token);
+      obtenerSolicitudesEnviadas(token);
     }
   }, []);
 
@@ -178,6 +180,9 @@ function App() {
       if (response.ok) {
         setCarpetaSeleccionada(carpeta);
         setArchivosCarpeta(data);
+        setMostrandoTodasLasImagenes(false);
+        setCarpetaCompartidaSeleccionada(null);
+        setArchivosCarpetaCompartida([]);
         setMensaje("");
       } else if (response.status === 401) {
         manejarSesionExpirada();
@@ -308,7 +313,9 @@ function App() {
       if (response.ok) {
         setMensaje(data.mensaje || "Archivo borrado correctamente");
 
-        if (carpetaSeleccionada) {
+        if (mostrandoTodasLasImagenes) {
+          obtenerTodosLosArchivos(token);
+        } else if (carpetaSeleccionada) {
           obtenerArchivosDeCarpeta(carpetaSeleccionada);
         }
       } else if (response.status === 401) {
@@ -404,6 +411,7 @@ function App() {
     obtenerCarpetas(data.token);
     obtenerArchivosCompartidos(data.token);
     obtenerCarpetasCompartidas(data.token);
+    obtenerTodosLosArchivos(data.token);
     obtenerSolicitudesRecibidas(data.token);
     obtenerSolicitudesEnviadas(data.token);
   };
@@ -498,7 +506,9 @@ function App() {
         setArchivoEditando(null);
         setNuevoNombreArchivo("");
 
-        if (carpetaSeleccionada) {
+        if (mostrandoTodasLasImagenes) {
+          obtenerTodosLosArchivos(token);
+        } else if (carpetaSeleccionada) {
           obtenerArchivosDeCarpeta(carpetaSeleccionada);
         }
       } else if (response.status === 401) {
@@ -539,7 +549,9 @@ function App() {
         setArchivoAMover(null);
         setCarpetaDestinoId("");
 
-        if (carpetaSeleccionada) {
+        if (mostrandoTodasLasImagenes) {
+          obtenerTodosLosArchivos(token);
+        } else if (carpetaSeleccionada) {
           obtenerArchivosDeCarpeta(carpetaSeleccionada);
         }
 
@@ -672,6 +684,12 @@ function App() {
       if (response.ok) {
         setCarpetaCompartidaSeleccionada(carpeta);
         setArchivosCarpetaCompartida(data);
+
+        // limpiar vista de mis archivos
+        setCarpetaSeleccionada(null);
+        setArchivosCarpeta([]);
+        setMostrandoTodasLasImagenes(false);
+
         setMensaje("");
       } else if (response.status === 401) {
         manejarSesionExpirada();
@@ -843,6 +861,35 @@ function App() {
     }
   };
 
+  const obtenerTodosLosArchivos = async (tokenRecibido = null) => {
+    const token = tokenRecibido || localStorage.getItem("token");
+
+    try {
+      const response = await fetch("http://localhost:8080/archivos/mis-archivos", {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setCarpetaSeleccionada(null);
+        setArchivosCarpeta(data);
+        setMostrandoTodasLasImagenes(true);
+        setCarpetaCompartidaSeleccionada(null);
+        setArchivosCarpetaCompartida([]);
+        setMensaje("");
+      } else if (response.status === 401) {
+        manejarSesionExpirada();
+      } else {
+        setMensaje(data.error || "Error al cargar todos los archivos");
+      }
+    } catch {
+      setMensaje("Error de conexión");
+    }
+  };
+
   return (
     <div>
       {!logueado && (
@@ -935,6 +982,12 @@ function App() {
 
             {/* IZQUIERDA */}
             <div className="sidebar">
+              <button
+                className="show-all-button"
+                onClick={() => obtenerTodosLosArchivos()}
+              >
+                Mostrar todas las imágenes
+              </button>
 
               <Carpetas
                 carpetas={carpetas}
@@ -965,8 +1018,10 @@ function App() {
 
               {mensaje && <p className="mensaje">{mensaje}</p>}
 
+
               <Archivos
                 carpetaSeleccionada={carpetaSeleccionada}
+                mostrandoTodasLasImagenes={mostrandoTodasLasImagenes}
                 archivosCarpeta={archivosCarpeta}
                 setArchivoSeleccionado={setArchivoSeleccionado}
                 subirArchivo={subirArchivo}

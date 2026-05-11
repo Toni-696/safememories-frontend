@@ -4,7 +4,7 @@ function CarpetasCompartidas({
 }) {
     return (
         <div>
-            <h2>Carpetas compartidas conmigo</h2>
+            <h2>Compartidas conmigo</h2>
 
             {carpetasCompartidas.length === 0 ? (
                 <p>No tienes carpetas compartidas</p>

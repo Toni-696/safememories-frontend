@@ -214,31 +214,46 @@ select {
   font-weight: bold;
   margin: 10px 0;
   word-break: break-word;
+  font-size: 13px;
 }
 
 .file-extra-actions {
   display: flex;
   justify-content: center;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 10px;
+  flex-wrap: nowrap;
+
+  gap: 0px;
+  margin-top: 8px;
 }
 
 .file-extra-actions button {
   background: #4a0f1b;
   color: white;
   border: none;
-  border-radius: 8px;
-  width: 36px;
-  height: 36px;
-  font-size: 17px;
+  border-radius: 6px;
+
+  width: 28px;
+  height: 28px;
+
+  font-size: 13px;
   padding: 0;
+
   cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
 }
 
 .file-extra-actions button:hover {
   background: #6b1628;
   transform: scale(1.08);
+}
+
+.file-card {
+  padding: 10px;
 }
 
 .shared-by {
@@ -256,25 +271,32 @@ select {
 
 .folder-header {
   display: flex;
-  align-items: center;
-  gap: 4px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
 }
 
 .folder-name-button {
   display: flex;
-  align-items: left;
-  gap: 4px;
+  align-items: center;
+  gap: 6px;
 
-  padding-left: 0;
-  margin-left: 4px;
+  width: 100%;
+
+  padding: 0;
+  margin: 0;
 
   background: transparent;
   color: #1e3a8a;
   font-weight: bold;
-  font-size: 16px;
+  font-size: 18px;
   border: none;
   cursor: pointer;
   text-align: left;
+
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
 }
 
 .folder-name-button:hover {
@@ -283,27 +305,46 @@ select {
 }
 
 .folder-icon {
+  width: 22px;
+  min-width: 22px;
+  height: 22px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   font-size: 18px;
 }
 
 .folder-actions {
   display: flex;
-  gap: 0px;
-  min-width: 105px;
-  justify-content: flex-end;
+  gap: 4px;
+
+  width: 100%;
+  justify-content: center;
+
+  margin-left: 0;
+  margin-top: 4px;
 }
 
 .folder-actions button {
   background: #2563eb;
-  /* azul principal */
   color: white;
   border: none;
-  border-radius: 8px;
-  width: 30px;
-  height: 30px;
-  padding: 0;
-  font-size: 16px;
+  border-radius: 7px;
+
+  width: 28px;
+  height: 28px;
+
+  padding: 8px;
+  margin: 8;
+
+  font-size: 13px;
   cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .folder-actions button:hover {
@@ -313,13 +354,6 @@ select {
 
 .folder-edit {
   margin-top: 10px;
-}
-
-.folder-name-button {
-  white-space: normal;
-  /* 👈 permite varias líneas */
-  overflow: visible;
-  text-overflow: unset;
 }
 
 /* CONTENEDOR GLOBAL LOGIN */
@@ -523,4 +557,95 @@ select {
 /* Más espacio para las fotos */
 .file-grid {
   grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+}
+
+.request-card {
+  border-radius: 10px;
+  padding: 8px 10px;
+  margin-bottom: 10px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.request-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+}
+
+.request-card.aceptada {
+  background: #dcfce7;
+  border-color: #86efac;
+}
+
+.request-card.pendiente {
+  background: #ffedd5;
+  border-color: #fdba74;
+}
+
+.request-card.rechazada {
+  background: #fee2e2;
+  border-color: #fca5a5;
+}
+
+.request-summary {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 3px 8px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.request-summary span:first-child {
+  word-break: break-word;
+}
+
+.request-details {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+  font-size: 11px;
+  line-height: 1.25;
+}
+
+.request-details p {
+  margin: 4px 0;
+}
+
+.request-details ul {
+  margin: 5px 0;
+  padding-left: 16px;
+}
+
+.request-details li {
+  margin-bottom: 4px;
+}
+
+.request-details button {
+  width: auto;
+  height: auto;
+  padding: 4px 7px;
+  margin-left: 6px;
+  font-size: 11px;
+}
+
+.request-buttons {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.request-buttons button {
+  font-size: 11px;
+  padding: 5px 8px;
+}
+
+.show-all-button {
+  width: 100%;
+  margin-bottom: 15px;
+  background: #1e3a8a;
+}
+
+.show-all-button:hover {
+  background: #172554;
 }

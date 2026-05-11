@@ -1,7 +1,25 @@
+import { useState } from "react";
+
 function SolicitudesRecibidas({
     solicitudesRecibidas,
     responderSolicitud
 }) {
+    const [solicitudAbierta, setSolicitudAbierta] = useState(null);
+
+    const formatearFecha = (fecha) => {
+        if (!fecha) return "";
+
+        return new Date(fecha).toLocaleDateString("es-ES", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "2-digit"
+        });
+    };
+
+    const toggleSolicitud = (id) => {
+        setSolicitudAbierta(solicitudAbierta === id ? null : id);
+    };
+
     return (
         <div>
             <h2>Solicitudes recibidas</h2>
@@ -11,34 +29,59 @@ function SolicitudesRecibidas({
             ) : (
                 <div>
                     {solicitudesRecibidas.map((solicitud) => (
-                        <div key={solicitud.id} className="request-card">
-                            <p>
-                                <strong>Solicitante:</strong> {solicitud.solicitante}
-                            </p>
+                        <div
+                            key={solicitud.id}
+                            className={`request-card ${solicitud.estado.toLowerCase()}`}
+                            onClick={() => toggleSolicitud(solicitud.id)}
+                        >
+                            <div className="request-summary">
+                                <span>{solicitud.solicitante}</span>
+                                <span>{solicitud.estado}</span>
+                                <span>{solicitud.archivos.length} archivo(s)</span>
+                                <span>{formatearFecha(solicitud.fechaSolicitud)}</span>
+                            </div>
 
-                            <p>
-                                <strong>Estado:</strong> {solicitud.estado}
-                            </p>
+                            {solicitudAbierta === solicitud.id && (
+                                <div className="request-details">
+                                    <p>
+                                        <strong>Solicitante:</strong> {solicitud.solicitante}
+                                    </p>
 
-                            <p>
-                                <strong>Archivos solicitados:</strong>
-                            </p>
+                                    <p>
+                                        <strong>Estado:</strong> {solicitud.estado}
+                                    </p>
 
-                            <ul>
-                                {solicitud.archivos.map((archivo, index) => (
-                                    <li key={index}>{archivo}</li>
-                                ))}
-                            </ul>
+                                    <p>
+                                        <strong>Archivos solicitados:</strong>
+                                    </p>
 
-                            {solicitud.estado === "PENDIENTE" && (
-                                <div>
-                                    <button onClick={() => responderSolicitud(solicitud.id, "aceptar")}>
-                                        Aceptar
-                                    </button>
+                                    <ul>
+                                        {solicitud.archivos.map((archivo, index) => (
+                                            <li key={index}>{archivo}</li>
+                                        ))}
+                                    </ul>
 
-                                    <button onClick={() => responderSolicitud(solicitud.id, "rechazar")}>
-                                        Rechazar
-                                    </button>
+                                    {solicitud.estado === "PENDIENTE" && (
+                                        <div className="request-buttons">
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    responderSolicitud(solicitud.id, "aceptar");
+                                                }}
+                                            >
+                                                Aceptar
+                                            </button>
+
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    responderSolicitud(solicitud.id, "rechazar");
+                                                }}
+                                            >
+                                                Rechazar
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </div>

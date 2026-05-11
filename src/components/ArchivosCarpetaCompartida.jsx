@@ -48,7 +48,9 @@ function ArchivosCarpetaCompartida({
                                             checked={seleccionado}
                                             onChange={() => cambiarSeleccion(archivo.id)}
                                         />
-                                        Seleccionar
+                                        <span className="request-download-text">
+                                            Solicitar descarga
+                                        </span>
                                     </label>
 
                                     {esImagen ? (
@@ -71,9 +73,9 @@ function ArchivosCarpetaCompartida({
                             );
                         })}
                     </div>
-
+                    <br></br>
                     <button onClick={solicitarDescarga}>
-                        Solicitar descarga de seleccionados
+                        Solicitar permisos de descarga al propietario
                     </button>
                 </>
             )}
