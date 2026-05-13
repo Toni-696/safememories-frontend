@@ -1,7 +1,3 @@
-//muestra el formulario de registro
-//si el registro es correcto, muestra un mensaje que diga "Usuario registrado correctamente. Ya puedes iniciar sesión."
-//y si no, muestra un mensaje que diga "Error al registrar usuario"     
-
 import { useState } from "react";
 
 function Registro({ onRegistroCorrecto, setMensaje }) {
@@ -27,9 +23,11 @@ function Registro({ onRegistroCorrecto, setMensaje }) {
 
             if (response.ok) {
                 setMensaje("Usuario registrado correctamente. Ya puedes iniciar sesión.");
+
                 setNombre("");
                 setEmail("");
                 setPassword("");
+
                 onRegistroCorrecto();
             } else {
                 setMensaje(data.error || data || "Error al registrar usuario");
@@ -41,37 +39,58 @@ function Registro({ onRegistroCorrecto, setMensaje }) {
     };
 
     return (
-        <div>
-            <h2>Registro</h2>
+        <div className="login-container">
 
-            <input
-                type="text"
-                placeholder="Nombre"
-                value={nombre}
-                onChange={(e) => setNombre(e.target.value)}
-            />
+            {/* LADO IZQUIERDO */}
+            <div className="login-image">
+                <div className="overlay">
+                    <h1>SafeMemories</h1>
 
-            <br /><br />
+                    <p>
+                        Crea tu cuenta y empieza a guardar y compartir tus recuerdos
+                        de forma privada y segura.
+                    </p>
+                </div>
+            </div>
 
-            <input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-            />
+            {/* FORMULARIO */}
+            <div className="login-form">
 
-            <br /><br />
+                <h2>Crear cuenta</h2>
 
-            <input
-                type="password"
-                placeholder="Contraseña"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-            />
+                <input
+                    type="text"
+                    placeholder="Nombre"
+                    value={nombre}
+                    onChange={(e) => setNombre(e.target.value)}
+                />
 
-            <br /><br />
+                <input
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                />
 
-            <button onClick={registrarUsuario}>Registrarse</button>
+                <input
+                    type="password"
+                    placeholder="Contraseña"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                />
+
+                <button onClick={registrarUsuario}>
+                    Registrarse
+                </button>
+
+                <button
+                    className="secondary-auth-button"
+                    onClick={onRegistroCorrecto}
+                >
+                    Volver al login
+                </button>
+
+            </div>
         </div>
     );
 }

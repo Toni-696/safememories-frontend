@@ -4,7 +4,7 @@
 
 import { useState } from "react";
 
-function Login({ onLogin, setMensaje }) {
+function Login({ onLogin, setMensaje, onCrearCuenta }) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
@@ -63,6 +63,11 @@ function Login({ onLogin, setMensaje }) {
 
                 <button onClick={login}>
                     Entrar
+                </button>
+                <br></br>
+                <br></br>
+                <button type="button" className="secondary-auth-button" onClick={onCrearCuenta}>
+                    Crear cuenta
                 </button>
 
             </div>

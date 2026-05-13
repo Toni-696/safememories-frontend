@@ -900,6 +900,7 @@ function App() {
             <Login
               onLogin={manejarLoginCorrecto}
               setMensaje={setMensaje}
+              onCrearCuenta={() => setMostrarRegistro(true)}
             />
           )}
 
@@ -910,9 +911,7 @@ function App() {
             />
           )}
 
-          <button onClick={() => setMostrarRegistro(!mostrarRegistro)}>
-            {mostrarRegistro ? "Volver al login" : "Crear cuenta"}
-          </button>
+
         </div>
       )}
 

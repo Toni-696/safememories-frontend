@@ -649,3 +649,57 @@ select {
 .show-all-button:hover {
   background: #172554;
 }
+
+.auth-switch {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 999;
+}
+
+.auth-switch button {
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 18px;
+  font-size: 15px;
+}
+
+.auth-switch button:hover {
+  background: #1d4ed8;
+}
+
+.auth-switch {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+}
+
+.auth-switch button {
+  width: 220px;
+  background: #64748b;
+}
+
+.auth-switch button:hover {
+  background: #172554;
+}
+
+.secondary-auth-button {
+  margin-top: 24px;
+  background: #64748b;
+  width: 180px;
+}
+
+.secondary-auth-button:hover {
+  background: #475569;
+}
+
+.secondary-auth-button {
+  margin-top: 18px;
+  background: #64748b;
+}
+
+.secondary-auth-button:hover {
+  background: #475569;
+}
