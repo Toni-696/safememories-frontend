@@ -642,6 +642,39 @@ function App() {
       setMensaje("Error de conexión");
     }
   };
+  const eliminarCuenta = async () => {
+    const confirmar = window.confirm(
+      "¿Seguro que quieres darte de baja? Tu cuenta quedará desactivada y no podrás volver a iniciar sesión."
+    );
+
+    if (!confirmar) {
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+
+    try {
+      const response = await fetch("http://localhost:8080/usuarios/perfil", {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        cerrarSesion();
+        setMensaje(data.mensaje || "Cuenta desactivada correctamente");
+      } else if (response.status === 401) {
+        manejarSesionExpirada();
+      } else {
+        setMensaje(data.error || "Error al desactivar la cuenta");
+      }
+    } catch {
+      setMensaje("Error de conexión");
+    }
+  };
   const obtenerCarpetasCompartidas = async (tokenRecibido = null) => {
     const token = tokenRecibido || localStorage.getItem("token");
 
@@ -970,6 +1003,20 @@ function App() {
 
                   <button onClick={cambiarPassword}>
                     Cambiar contraseña
+                  </button>
+                  <hr />
+
+                  <h3>Eliminar cuenta</h3>
+
+                  <p className="delete-account-text">
+                    Esta acción desactivará tu cuenta y cerrará la sesión.
+                  </p>
+
+                  <button
+                    className="delete-account-button"
+                    onClick={eliminarCuenta}
+                  >
+                    Darme de baja
                   </button>
                 </div>
               )}
